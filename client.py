@@ -5,16 +5,24 @@ from tkinter import *
 from tkinter import font
 from tkinter import ttk
 
+# Configurações de rede
 PORT = 5000
-SERVER = "192.168.0.15"  # Lembrar de substituir pelo endereço IP do servidor
+SERVER = "192.168.0.15"  # Substitua pelo endereço IP do servidor
 ADDRESS = (SERVER, PORT)
 FORMAT = "utf-8"
 
+# Criação de um socket cliente
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDRESS)
 
 class GUI:
     def __init__(self):
+        """
+        Inicializa a interface gráfica do cliente.
+
+        Esta classe cria a interface gráfica para o cliente de chat.
+        Inclui janelas de login e uma janela principal para exibir as mensagens do chat.
+        """
         self.Window = Tk()
         self.Window.withdraw()
 
@@ -23,6 +31,7 @@ class GUI:
         self.login.resizable(width=False, height=False)
         self.login.configure(width=400, height=300)
 
+        # Componentes da janela de login
         self.pls = Label(self.login, text="Por favor, faça login para continuar", justify=CENTER, font="Helvetica 14 bold")
         self.pls.place(relheight=0.15, relx=0.2, rely=0.07)
 
@@ -39,18 +48,30 @@ class GUI:
         self.Window.mainloop()
 
     def goAhead(self, name):
+        """
+        Realiza a ação após o login.
+
+        Fecha a janela de login e inicia a janela principal do chat.
+        Também inicia uma thread para receber mensagens.
+        """
         self.login.destroy()
         self.layout(name)
         rcv = threading.Thread(target=self.receive)
         rcv.start()
 
     def layout(self, name):
+        """
+        Configura a janela principal do chat.
+
+        Esta função cria a janela principal do chat com um campo de entrada de mensagem e exibição de mensagens.
+        """
         self.name = name
         self.Window.deiconify()
         self.Window.title("CHATROOM")
         self.Window.resizable(width=False, height=False)
         self.Window.configure(width=470, height=550, bg="#17202A")
 
+        # Componentes da janela principal do chat
         self.labelHead = Label(self.Window, bg="#17202A", fg="#EAECEE", text=self.name, font="Helvetica 13 bold", pady=5)
         self.labelHead.place(relwidth=1)
 
@@ -77,6 +98,11 @@ class GUI:
         self.textCons.config(state=DISABLED)
 
     def sendButton(self, msg):
+        """
+        Envia a mensagem digitada pelo usuário.
+
+        Limpa o campo de entrada de mensagem após o envio.
+        """
         self.textCons.config(state=DISABLED)
         self.msg = msg
         self.entryMsg.delete(0, END)
@@ -84,6 +110,11 @@ class GUI:
         snd.start()
 
     def receive(self):
+        """
+        Recebe mensagens do servidor.
+
+        Exibe mensagens recebidas na janela do chat.
+        """
         while True:
             try:
                 message = client.recv(1024).decode(FORMAT)
@@ -100,10 +131,16 @@ class GUI:
                 break
 
     def sendMessage(self):
+        """
+        Envia a mensagem para o servidor.
+
+        Formata a mensagem com o nome do usuário e a envia para o servidor.
+        """
         self.textCons.config(state=DISABLED)
         while True:
             message = f"{self.name}: {self.msg}"
             client.send(message.encode(FORMAT))
             break
 
+# Inicializa a interface gráfica do cliente
 g = GUI()
