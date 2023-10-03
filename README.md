@@ -33,7 +33,9 @@ Também é necessário ter o git instalado no seu computador para baixar o códi
 
 <br>
 
-5. **Abra mais dois terminais no mesmo diretório e digite em cada terminal:**```bashpython client.py
+5. **Abra mais dois terminais no mesmo diretório e digite em cada terminal:**
+   ```bash
+   python client.py
 
 <br>
 
